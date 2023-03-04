@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 # Libraries
-
+import os
 import sys
 import random
 
@@ -87,6 +87,7 @@ class CNF():
             c.show()
 
 
+
 # Main
 
 if __name__ == '__main__':
@@ -131,4 +132,20 @@ if __name__ == '__main__':
     cnf_formula = CNF(num_vars, num_clauses, clause_length)
     # Show formula
     cnf_formula.show()
+
+    #create a file with the formula in DIMACS cnf format
+    #with the name of num_vars-num_clauses-clause_length.cnf
+    # and save it in a folder called "cnf-formulas"
+    if not os.path.exists("cnf-formulas"):
+        os.makedirs("cnf-formulas")
+    os.chdir("cnf-formulas")
+    with open(str(num_vars) + "-" + str(num_clauses) + "-" + str(clause_length) + ".cnf", "w") as f:
+        f.write("p cnf %d %d\n" % (num_vars, num_clauses))
+        for c in cnf_formula.clauses:
+            f.write("%s 0 \n" % " ".join(str(l) for l in c.lits))
+
+
+
+
+
     
