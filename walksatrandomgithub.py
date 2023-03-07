@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
     # and return the solution in the format: v SATISFIABLE if the problem is satisfiable, v UNSATISFIABLE otherwise
     if run_sat(clauses, n_vars, lit_clause) is None:
-        print("v UNSATISFIABLE")
+        print("s UNSATISFIABLE")
     else:
-        print("v SATISFIABLE")
+        print("s SATISFIABLE")
         print("v", run_sat(clauses, n_vars, lit_clause))
