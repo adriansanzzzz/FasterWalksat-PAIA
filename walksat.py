@@ -20,6 +20,7 @@ def parse(filename):
         count += 1
     return clauses, n_vars, lit_clause
 
+
 def random_interpretation(n_vars):
     return [i if random.randrange(2) == 0 else -i for i in range(n_vars + 1)]
 
@@ -48,6 +49,7 @@ def compute_broken(clause, true_sat_lit, lit_in_clauses, interpretation, omega=0
         if break_score < break_min:
             break_min = break_score
             best_literals = [literal]
+
         elif break_score == break_min:
             best_literals.append(literal)
     if break_min != 0 and random.random() < omega:
@@ -65,7 +67,7 @@ def true_sat_literals(clauses, interpretation):
                 literals[i] += 1
     return literals
 
-def run_sat(clauses, n_vars, lit_clause, max_flips_proportion=4):
+def sat33(clauses, n_vars, lit_clause, max_flips_proportion=5):
     max_flips = len(clauses) * max_flips_proportion * n_vars
     interpretation = random_interpretation(n_vars)
     true_sat_lit = true_sat_literals(clauses, interpretation)
@@ -80,8 +82,11 @@ def run_sat(clauses, n_vars, lit_clause, max_flips_proportion=4):
         update_literal(lit_to_flip, true_sat_lit, lit_clause)
         interpretation[abs(lit_to_flip)] = -interpretation[abs(lit_to_flip)]
 
+
+
 if __name__ == '__main__':
     clauses, n_vars, lit_clause = parse(sys.argv[1])
-    solution = run_sat(clauses, n_vars, lit_clause)
-
-    print('s SATISFIABLE' + "\n" + 'v ' + ' '.join(map(str, solution[1:])) + ' 0')
+    solution = sat33(clauses, n_vars, lit_clause)
+    satisfiable = 's SATISFIABLE'
+    interpretation = 'v ' + ' '.join(map(str, solution[1:])) + ' 0'
+    print(satisfiable + "\n" + interpretation)
