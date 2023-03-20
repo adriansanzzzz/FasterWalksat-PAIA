@@ -2,23 +2,23 @@ import random
 import sys
 
 def parse(filename):
-    with open(filename) as f:
-        lines = f.readlines()
-
-    comment_lines = [line for line in lines if line.startswith('c')]
-    header_line = next(line for line in lines if line.startswith('p'))
-    n_vars = int(header_line.split()[2])
-    lit_clause = [[] for _ in range(n_vars * 2 + 1)]
-
     clauses = []
-    for line in lines[len(comment_lines)+1:]:
-        clause = [int(literal) for literal in line.split()[:-1]]
+    count = 0
+    for line in open(filename):
+        if line.startswith('c'):
+            continue
+        if line.startswith('p'):
+            n_vars = int(line.split()[2])
+            lit_clause = [[] for _ in range(n_vars * 2 + 1)]
+            continue
+        clause = []
+        for literal in line[:-2].split():
+            literal = int(literal)
+            clause.append(literal)
+            lit_clause[literal].append(count)
         clauses.append(clause)
-        for literal in clause:
-            lit_clause[literal].append(len(clauses)-1)
-
+        count += 1
     return clauses, n_vars, lit_clause
-
 
 def random_interpretation(n_vars):
     return [i if random.randrange(2) == 0 else -i for i in range(n_vars + 1)]
@@ -32,7 +32,7 @@ def update_literal(literal_to_flip, true_sat_lit, lit_clause):
 
 
 def compute_broken(clause, true_sat_lit, lit_in_clauses, interpretation, omega=0.4):
-    break_min = float('inf')
+    break_min = sys.maxsize
     best_literals = []
     for literal in clause:
         break_score = 0
@@ -83,4 +83,5 @@ def run_sat(clauses, n_vars, lit_clause, max_flips_proportion=4):
 if __name__ == '__main__':
     clauses, n_vars, lit_clause = parse(sys.argv[1])
     solution = run_sat(clauses, n_vars, lit_clause)
-    print("s SATISFIABLE \n" + 'v ' + ' '.join(map(str, solution[1:])) + ' 0')
+
+    print('s SATISFIABLE' + "\n" + 'v ' + ' '.join(map(str, solution[1:])) + ' 0')
